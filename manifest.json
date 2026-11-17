@@ -1,6 +1,6 @@
 {
   "version": "c835695992e0f5c7453514ca39f5ee2ad0ffd87a",
-  "createdAt": "2026-11-17T18:39:13.571Z",
+  "createdAt": "2026-11-17T19:02:33.014Z",
   "files": [
     {
       "path": "_astro/BaseLayout.astro_astro_type_script_index_0_lang.CVXe1XxB.js",
@@ -149,8 +149,8 @@
     },
     {
       "path": "index.html",
-      "sha256": "893491a091be977db709c705f8286da4a2c9ec86af592da9be84cd5d903eb8fa",
-      "size": 55183
+      "sha256": "fd4b1e342af536436c017d17ba3bca2ab2e59e5cfec7969f408334f7ca38071b",
+      "size": 56612
     },
     {
       "path": "og-image.webp",

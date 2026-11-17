@@ -1,0 +1,51 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Binos\Estimate;
+
+use Closure;
+
+final readonly class FileRateLimiter implements RateLimiter
+{
+    /** @param Closure(): int $now */
+    public function __construct(private string $dir, private Closure $now)
+    {
+    }
+
+    public function hit(string $key, int $limit, int $windowSeconds): bool
+    {
+        if (!is_dir($this->dir) && !mkdir($this->dir, 0700, true) && !is_dir($this->dir)) {
+            return true;
+        }
+        $handle = fopen($this->dir . '/' . hash('sha256', $key), 'c+');
+        if ($handle === false || !flock($handle, LOCK_EX)) {
+            return true;
+        }
+        $now = ($this->now)();
+        $recent = array_values(array_filter(self::read($handle), static fn (int $time): bool => $time > $now - $windowSeconds));
+        $allowed = count($recent) < $limit;
+        if ($allowed) {
+            $recent[] = $now;
+        }
+        ftruncate($handle, 0);
+        rewind($handle);
+        fwrite($handle, implode("\n", $recent));
+        flock($handle, LOCK_UN);
+        fclose($handle);
+        return $allowed;
+    }
+
+    /**
+     * @param resource $handle
+     * @return list<int>
+     */
+    private static function read($handle): array
+    {
+        $content = stream_get_contents($handle);
+        if ($content === false || $content === '') {
+            return [];
+        }
+        return array_map('intval', explode("\n", $content));
+    }
+}

@@ -1,0 +1,31 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Binos\Estimate;
+
+final readonly class SpamGuard
+{
+    private const int PER_VISITOR_LIMIT = 3;
+    private const int PER_VISITOR_WINDOW = 600;
+    private const int SITE_LIMIT = 20;
+    private const int SITE_WINDOW = 3600;
+    private const int DUPLICATE_WINDOW = 600;
+
+    public function __construct(private RateLimiter $limiter)
+    {
+    }
+
+    public function check(EstimateRequest $request, string $clientId): ?HandlerResult
+    {
+        $fingerprint = implode("\n", [$request->name, $request->phone, $request->email ?? '', $request->service, $request->message]);
+        if (!$this->limiter->hit('duplicate:' . $fingerprint, 1, self::DUPLICATE_WINDOW)) {
+            return HandlerResult::sent();
+        }
+        $visitorAllowed = $this->limiter->hit('visitor:' . $clientId, self::PER_VISITOR_LIMIT, self::PER_VISITOR_WINDOW);
+        if (!$visitorAllowed || !$this->limiter->hit('site', self::SITE_LIMIT, self::SITE_WINDOW)) {
+            return HandlerResult::failed(429, 'Too many requests. Please wait a few minutes, or call or text us.');
+        }
+        return null;
+    }
+}

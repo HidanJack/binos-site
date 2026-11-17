@@ -1,0 +1,46 @@
+<?php
+
+declare(strict_types=1);
+
+use Binos\Estimate\EstimateHandler;
+use Binos\Estimate\FileRateLimiter;
+use Binos\Estimate\HandlerResult;
+use Binos\Estimate\NativeMailer;
+
+const OWNER_ADDRESS = 'victor@binosrepairservices.com';
+
+spl_autoload_register(static function (string $class): void {
+    $prefix = 'Binos\\Estimate\\';
+    if (str_starts_with($class, $prefix)) {
+        require __DIR__ . '/lib/' . substr($class, strlen($prefix)) . '.php';
+    }
+});
+
+function respond(HandlerResult $result, bool $wantsJson): void
+{
+    if ($wantsJson) {
+        http_response_code($result->status);
+        header('Content-Type: application/json; charset=utf-8');
+        echo $result->toJson();
+        return;
+    }
+    if ($result->ok) {
+        header('Location: ../thanks/', true, 303);
+        return;
+    }
+    http_response_code($result->status);
+    header('Content-Type: text/plain; charset=utf-8');
+    echo $result->message, ' Please go back and try again, or call or text us.';
+}
+
+if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
+    http_response_code(405);
+    header('Allow: POST');
+    exit;
+}
+
+$accept = $_SERVER['HTTP_ACCEPT'] ?? '';
+$limiter = new FileRateLimiter(sys_get_temp_dir() . '/binos-estimate-limits', static fn (): int => time());
+$handler = new EstimateHandler(new NativeMailer(OWNER_ADDRESS), $limiter, OWNER_ADDRESS);
+$clientId = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+respond($handler->handle($_POST, is_string($clientId) ? $clientId : 'unknown'), is_string($accept) && str_contains($accept, 'application/json'));

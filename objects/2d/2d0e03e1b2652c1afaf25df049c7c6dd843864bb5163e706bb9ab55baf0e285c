@@ -1,0 +1,55 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Binos\Estimate;
+
+final readonly class EstimateHandler
+{
+    private const string HONEYPOT = 'company';
+
+    private EstimateEmails $emails;
+
+    public function __construct(private Mailer $mailer, string $ownerAddress)
+    {
+        $this->emails = new EstimateEmails($ownerAddress);
+    }
+
+    /** @param array<mixed> $post */
+    public function handle(array $post): HandlerResult
+    {
+        if (self::isBot($post)) {
+            return HandlerResult::sent();
+        }
+        try {
+            $request = EstimateRequest::fromPost($post);
+            $this->mailer->send($this->emails->forOwner($request));
+        } catch (InvalidRequest $error) {
+            return HandlerResult::failed(422, $error->getMessage());
+        } catch (MailFailed) {
+            return HandlerResult::failed(502, "We couldn't send your request.");
+        }
+        $this->confirmToCustomer($request);
+        return HandlerResult::sent();
+    }
+
+    private function confirmToCustomer(EstimateRequest $request): void
+    {
+        $confirmation = $this->emails->forCustomer($request);
+        if ($confirmation === null) {
+            return;
+        }
+        try {
+            $this->mailer->send($confirmation);
+        } catch (MailFailed) {
+            return;
+        }
+    }
+
+    /** @param array<mixed> $post */
+    private static function isBot(array $post): bool
+    {
+        $trap = $post[self::HONEYPOT] ?? '';
+        return !is_string($trap) || trim($trap) !== '';
+    }
+}

@@ -1,6 +1,6 @@
 {
-  "version": "fcaf6d5a462a386d20f415b9328ea592a7e9ce53",
-  "createdAt": "2026-11-17T19:34:01.586Z",
+  "version": "42324553f4aee51f9930f3d1d5a47958350f7fb6",
+  "createdAt": "2026-11-17T19:50:09.168Z",
   "files": [
     {
       "path": "_astro/BaseLayout.astro_astro_type_script_index_0_lang.CVXe1XxB.js",
@@ -143,14 +143,69 @@
       "size": 61
     },
     {
+      "path": "estimate/lib/.htaccess",
+      "sha256": "fa28d421a28ed9b6f4b997d5119c2b8adbacff6e2dd119a179b71230f9664934",
+      "size": 19
+    },
+    {
+      "path": "estimate/lib/EstimateEmails.php",
+      "sha256": "6608e240e7614996a5257f952a8178a6951aace000b4e0f84bc9999e37a9bc8f",
+      "size": 1390
+    },
+    {
+      "path": "estimate/lib/EstimateHandler.php",
+      "sha256": "2d0e03e1b2652c1afaf25df049c7c6dd843864bb5163e706bb9ab55baf0e285c",
+      "size": 1521
+    },
+    {
+      "path": "estimate/lib/EstimateRequest.php",
+      "sha256": "b08422d94e2d80993cc054c62b8a6eccee9236d439242b408284b6700ea35260",
+      "size": 2061
+    },
+    {
+      "path": "estimate/lib/HandlerResult.php",
+      "sha256": "9cae857b1f491bdf832d0c3b1b41b1da9b1100aa461ee67ce6450564fedf4d02",
+      "size": 609
+    },
+    {
+      "path": "estimate/lib/InvalidRequest.php",
+      "sha256": "c6216ab67535d350bebdaba929e549f0c37e61134d512c04738554cefc0f4af7",
+      "size": 139
+    },
+    {
+      "path": "estimate/lib/Mailer.php",
+      "sha256": "b62a02f8ade209208efd22cdb3c52baa85c22fa054d48039adba32353b6dbd4a",
+      "size": 161
+    },
+    {
+      "path": "estimate/lib/MailFailed.php",
+      "sha256": "12b05388eba9a66545fc032d63c891375b70a352fd77c31d9f430f7f8e4d52d4",
+      "size": 135
+    },
+    {
+      "path": "estimate/lib/Message.php",
+      "sha256": "7992a7f9c54a6899ff69b6032d55755a3a313aba0a7265d34bbab57188cd76aa",
+      "size": 297
+    },
+    {
+      "path": "estimate/lib/NativeMailer.php",
+      "sha256": "7fe9dae922a6897c8ee3de746806b23895d9f81ab4b4a99c71f8b6d575ab988e",
+      "size": 850
+    },
+    {
+      "path": "estimate/send.php",
+      "sha256": "c297fb67f6967134df5b785c263a81cad5041d744c3294d3cac34e31ea4c5e5a",
+      "size": 1294
+    },
+    {
       "path": "favicon.webp",
       "sha256": "5661eb92ad461b3e5812276c7cb2851afbd2967ac0cc38c843375a1902693d3c",
       "size": 8116
     },
     {
       "path": "index.html",
-      "sha256": "893491a091be977db709c705f8286da4a2c9ec86af592da9be84cd5d903eb8fa",
-      "size": 55183
+      "sha256": "0deeb01ef0075e74b849de8bae304f7ef1aa2223f94e046b4c344684d823a396",
+      "size": 56999
     },
     {
       "path": "og-image.webp",

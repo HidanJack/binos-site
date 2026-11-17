@@ -1,0 +1,11 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Binos\Estimate;
+
+interface Mailer
+{
+    /** @throws MailFailed */
+    public function send(Message $message): void;
+}

@@ -1,0 +1,17 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Binos\Estimate;
+
+final readonly class Message
+{
+    public function __construct(
+        public string $to,
+        public string $from,
+        public string $subject,
+        public string $body,
+        public ?string $replyTo = null,
+    ) {
+    }
+}

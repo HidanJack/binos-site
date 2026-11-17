@@ -1,0 +1,29 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Binos\Estimate;
+
+final readonly class NativeMailer implements Mailer
+{
+    public function __construct(private string $envelopeSender)
+    {
+    }
+
+    public function send(Message $message): void
+    {
+        $headers = [
+            'From' => $message->from,
+            'MIME-Version' => '1.0',
+            'Content-Type' => 'text/plain; charset=UTF-8',
+            'Content-Transfer-Encoding' => '8bit',
+        ];
+        if ($message->replyTo !== null) {
+            $headers['Reply-To'] = $message->replyTo;
+        }
+        $subject = mb_encode_mimeheader($message->subject, 'UTF-8');
+        if (!mail($message->to, $subject, $message->body, $headers, '-f' . $this->envelopeSender)) {
+            throw new MailFailed('The server did not accept the email for ' . $message->to);
+        }
+    }
+}

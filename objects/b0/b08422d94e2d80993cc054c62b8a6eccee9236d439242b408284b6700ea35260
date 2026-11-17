@@ -1,0 +1,65 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Binos\Estimate;
+
+final readonly class EstimateRequest
+{
+    private function __construct(
+        public string $name,
+        public string $phone,
+        public ?string $email,
+        public string $service,
+        public string $message,
+    ) {
+    }
+
+    /** @param array<mixed> $post */
+    public static function fromPost(array $post): self
+    {
+        $name = self::singleLine($post, 'name', 100);
+        $phone = self::singleLine($post, 'phone', 40);
+        if ($name === '') {
+            throw new InvalidRequest('Please add your name.');
+        }
+        if (preg_match_all('/\d/', $phone) < 7) {
+            throw new InvalidRequest('Please add a phone number we can call or text.');
+        }
+        return new self($name, $phone, self::email($post), self::singleLine($post, 'service', 100), self::text($post, 'message', 3000));
+    }
+
+    /** @param array<mixed> $post */
+    private static function email(array $post): ?string
+    {
+        $email = self::text($post, 'email', 254);
+        if ($email === '') {
+            return null;
+        }
+        if (filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
+            throw new InvalidRequest('Please check your email address.');
+        }
+        return $email;
+    }
+
+    /** @param array<mixed> $post */
+    private static function singleLine(array $post, string $field, int $maxLength): string
+    {
+        $value = preg_replace('/\s*[\r\n]+\s*/', ' ', self::text($post, $field, $maxLength));
+        return trim($value ?? '');
+    }
+
+    /** @param array<mixed> $post */
+    private static function text(array $post, string $field, int $maxLength): string
+    {
+        $value = $post[$field] ?? '';
+        if (!is_string($value)) {
+            throw new InvalidRequest('Please check the form and try again.');
+        }
+        $value = trim($value);
+        if (mb_strlen($value) > $maxLength) {
+            throw new InvalidRequest('Some answers are too long. Please shorten them.');
+        }
+        return $value;
+    }
+}

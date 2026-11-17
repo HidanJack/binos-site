@@ -1,0 +1,27 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Binos\Estimate;
+
+final readonly class HandlerResult
+{
+    private function __construct(public bool $ok, public int $status, public string $message)
+    {
+    }
+
+    public static function sent(): self
+    {
+        return new self(true, 200, 'Thanks! We got your request.');
+    }
+
+    public static function failed(int $status, string $message): self
+    {
+        return new self(false, $status, $message);
+    }
+
+    public function toJson(): string
+    {
+        return json_encode(['ok' => $this->ok, 'message' => $this->message], JSON_THROW_ON_ERROR);
+    }
+}

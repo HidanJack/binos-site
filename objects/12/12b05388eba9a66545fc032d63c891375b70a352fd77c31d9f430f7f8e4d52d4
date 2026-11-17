@@ -1,0 +1,11 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Binos\Estimate;
+
+use RuntimeException;
+
+final class MailFailed extends RuntimeException
+{
+}

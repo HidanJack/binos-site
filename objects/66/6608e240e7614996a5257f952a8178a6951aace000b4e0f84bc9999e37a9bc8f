@@ -1,0 +1,38 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Binos\Estimate;
+
+final readonly class EstimateEmails
+{
+    private const string OWNER_INTRO = "Hi, a client has just contacted Bino's Repair Services. You have 24hrs from now to respond to the recipient.";
+    private const string CUSTOMER_BODY = "Hi, thanks for contacting Bino's Repair Service. A repair specialist will contact you within 24hrs.\n\nSincerely, Victor";
+
+    public function __construct(private string $ownerAddress)
+    {
+    }
+
+    public function forOwner(EstimateRequest $request): Message
+    {
+        $lines = [
+            self::OWNER_INTRO,
+            '',
+            'Your Name: ' . $request->name,
+            'Phone: ' . $request->phone,
+            'Your E-mail: ' . ($request->email ?? '(not given)'),
+            'Service: ' . ($request->service !== '' ? $request->service : '(not chosen)'),
+            'Message:',
+            $request->message !== '' ? $request->message : '(no message)',
+        ];
+        return new Message($this->ownerAddress, $this->ownerAddress, "Bino's Client Contact", implode("\n", $lines), $request->email);
+    }
+
+    public function forCustomer(EstimateRequest $request): ?Message
+    {
+        if ($request->email === null) {
+            return null;
+        }
+        return new Message($request->email, $this->ownerAddress, "Bino's Repair Services", self::CUSTOMER_BODY);
+    }
+}
